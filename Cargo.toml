@@ -1,0 +1,7 @@
+[package]
+name = "ppm_viewer"
+version = "0.1.0"
+authors = ["shinjoe"]
+
+[dependencies]
+piston_window = "0.70.0"
