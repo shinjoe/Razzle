@@ -4,7 +4,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
-pub fn parse_file() -> (i32, i32, f32, Vec<i32>) {
+pub fn parse_file() -> (i32, i32, Vec<f32>) {
     let args: Vec<String> = env::args().collect();
     let path = Path::new(&args[1]);
     let display = path.display();
@@ -24,7 +24,7 @@ pub fn parse_file() -> (i32, i32, f32, Vec<i32>) {
     let mut num_rows = -1;
     let mut num_cols = -1;
     let mut max_val = -1.0;
-    let mut pixels: Vec<i32> = Vec::new();
+    let mut pixels: Vec<f32> = Vec::new();
     for (i, line) in lines.enumerate() {
         match i {
             0 => {
@@ -43,10 +43,11 @@ pub fn parse_file() -> (i32, i32, f32, Vec<i32>) {
             _ => {
                 let cur_line_of_pixels = line.split_whitespace();
                 for x in cur_line_of_pixels {
-                    pixels.push(x.parse().unwrap())
+                    let color_value: i32 = x.parse().unwrap();
+                    pixels.push(color_value as f32/max_val)
                 }
             }
         }
     }
-    (num_rows, num_cols, max_val, pixels)
+    (num_rows, num_cols, pixels)
 }

@@ -10,8 +10,7 @@ fn main() {
     // we're dealing with rgb triplets, so that's our stride.
     const STRIDE: i32 = 3;
 
-    let (num_rows, num_cols, max_val, pixels) = fileutil::parse_file();
-    println!("{}", num_rows);
+    let (num_rows, num_cols, pixels) = fileutil::parse_file();
 
     assert!(pixels.len() as i32 == num_cols * num_rows * STRIDE, "Length of pixel array must match num_cols * num_rows * {}. Input is malformed!", STRIDE);
 
@@ -21,16 +20,16 @@ fn main() {
     let mut window: PistonWindow = WindowSettings::new("PPM Viewer", window_dimensions)
                                    .exit_on_esc(true).build().unwrap();
 
+    const WHITE: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
+
     while let Some(event) = window.next() {
         window.draw_2d(&event, |context, graphics| {
-            clear([1.0; 4], graphics);
+            clear(WHITE, graphics);
             for row in 0..num_rows {
                 for col in 0..num_cols {
-                    let red_component = pixels[(num_cols * row * STRIDE + col * STRIDE) as usize] as f32;
-                    let green_component = pixels[(num_cols * row * STRIDE + col * STRIDE + 1) as usize] as f32;
-                    let blue_component = pixels[(num_cols * row * STRIDE + col * STRIDE + 2) as usize] as f32;
-                    rectangle([red_component/max_val, green_component/max_val, blue_component/max_val, 1.0],
-                        [(col * BLOCK_SIZE) as f64, (row * BLOCK_SIZE) as f64, BLOCK_SIZE as f64, BLOCK_SIZE as f64],
+                    let index = (num_cols * row * STRIDE + col * STRIDE) as usize;
+                    rectangle([pixels[index], pixels[index + 1], pixels[index + 2], 1.0],
+                        [col as f64 , row as f64, BLOCK_SIZE as f64, BLOCK_SIZE as f64],
                         context.transform,
                         graphics);
                 }
