@@ -16,7 +16,8 @@ fn main() {
 
     let (num_rows, num_cols, pixels) = fileutil::parse_file();
 
-    assert!(pixels.len() == (num_cols * num_rows * STRIDE) as usize, "Length of pixel array must match num_cols * num_rows * {}. Input is malformed!", STRIDE);
+    assert!(pixels.len() == (num_cols * num_rows * STRIDE) as usize,
+            "Length of pixel array must match num_cols * num_rows * {}. Input is malformed!", STRIDE);
 
     let window_dimensions = [num_cols * BLOCK_SIZE, num_rows * BLOCK_SIZE];
     println!("{} x {}", window_dimensions[0], window_dimensions[1]);
@@ -24,9 +25,12 @@ fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_context = sdl_context.video().unwrap();
 
-    let window = match video_context.window("Razzle", window_dimensions[0], window_dimensions[1]).position_centered().opengl().build() {
-        Ok(window) => window,
-        Err(err) => panic!("failed to create window: {}", err)
+    let window = match video_context.window("Razzle", window_dimensions[0], window_dimensions[1])
+        .position_centered()
+        .opengl()
+        .build() {
+            Ok(window) => window,
+            Err(err) => panic!("failed to create window: {}", err)
     };
 
     let mut canvas = match window.into_canvas().build() {
@@ -40,7 +44,9 @@ fn main() {
     for row in 0..num_rows {
         for col in 0..num_cols {
             let index = (num_cols * row * STRIDE + col * STRIDE) as usize;
-            canvas.set_draw_color(sdl2::pixels::Color::RGB(pixels[index] as u8, pixels[index + 1] as u8, pixels[index + 2] as u8));
+            canvas.set_draw_color(sdl2::pixels::Color::RGB(pixels[index] as u8,
+                                                           pixels[index + 1] as u8,
+                                                           pixels[index + 2] as u8));
             canvas.fill_rect(Rect::new(col as i32, row as i32, BLOCK_SIZE, BLOCK_SIZE));
         }
     }
