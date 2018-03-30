@@ -1,17 +1,12 @@
-use std::env;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
-pub fn parse_file() -> (u32, u32, Vec<u32>) {
+pub fn parse_ppm_file(ppm_location: &str) -> (u32, u32, Vec<u32>) {
     const SUPPORTED_MAGIC_NUMBER: &str = "P3";
 
-    let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
-        panic!("Need to supply name of file as command line argument.");
-    }
-    let path = Path::new(&args[1]);
+    let path = Path::new(ppm_location);
     let display = path.display();
 
     let mut file = match File::open(&path) {

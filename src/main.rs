@@ -1,5 +1,6 @@
 extern crate sdl2;
 
+use std::env;
 use std::time::{Duration,Instant};
 use std::thread::sleep;
 
@@ -19,7 +20,12 @@ fn main() {
     const FPS: u64 = 60;
     const FRAME_DELAY: Duration = Duration::from_millis(1000 / FPS);
 
-    let (num_rows, num_cols, pixels) = fileutil::parse_file();
+    let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        panic!("Need to supply name of file as command line argument.");
+    }
+
+    let (num_rows, num_cols, pixels) = fileutil::parse_ppm_file(&args[1]);
 
     assert!(pixels.len() == (num_cols * num_rows * STRIDE) as usize,
             "Length of pixel array must match num_cols * num_rows * {}. Input is malformed!", STRIDE);
