@@ -1,5 +1,8 @@
 extern crate sdl2;
 
+use std::time::{Duration,Instant};
+use std::thread::sleep;
+
 use sdl2::event::Event;
 use sdl2::rect::Rect;
 use sdl2::keyboard::Keycode;
@@ -13,6 +16,8 @@ fn main() {
     const BLOCK_SIZE: u32 = 1;
     // we're dealing with rgb triplets, so that's our stride.
     const STRIDE: u32 = 3;
+    const FPS: u64 = 60;
+    const FRAME_DELAY: Duration = Duration::from_millis(1000 / FPS);
 
     let (num_rows, num_cols, pixels) = fileutil::parse_file();
 
@@ -53,10 +58,13 @@ fn main() {
 
     canvas.present();
 
-    // todo: limit fps
+    let mut frame_start: Instant;
+    let mut frame_time: Duration;
     let mut events = sdl_context.event_pump().unwrap();
     let mut done = false;
     while !done {
+        frame_start = Instant::now();
+
         for event in events.poll_iter() {
             match event {
                 Event::Quit{..} => done = true,
@@ -67,6 +75,11 @@ fn main() {
                 }
                 _ => {}
             }
+        }
+
+        frame_time = Instant::now().duration_since(frame_start);
+        if FRAME_DELAY > frame_time {
+            sleep(FRAME_DELAY - frame_time);
         }
     }
 }
