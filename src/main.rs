@@ -10,8 +10,12 @@ use sdl2::keyboard::Keycode;
 
 mod fileutil;
 
-#[allow(unused_must_use)]
+struct WindowDimension {
+    width: u32,
+    height: u32
+}
 
+#[allow(unused_must_use)]
 fn main() {
     // size of each pixel when rendered. Defaults to 1, increase if you want to zoom in.
     const BLOCK_SIZE: u32 = 1;
@@ -30,13 +34,13 @@ fn main() {
     assert!(pixels.len() == (num_cols * num_rows * STRIDE) as usize,
             "Length of pixel array must match num_cols * num_rows * {}. Input is malformed!", STRIDE);
 
-    let window_dimensions = [num_cols * BLOCK_SIZE, num_rows * BLOCK_SIZE];
-    println!("{} x {}", window_dimensions[0], window_dimensions[1]);
+    let window_dimensions = WindowDimension { width: num_cols * BLOCK_SIZE, height: num_rows * BLOCK_SIZE };
+    println!("{} x {}", window_dimensions.width, window_dimensions.height);
 
     let sdl_context = sdl2::init().unwrap();
     let video_context = sdl_context.video().unwrap();
 
-    let window = match video_context.window("Razzle", window_dimensions[0], window_dimensions[1])
+    let window = match video_context.window("Razzle", window_dimensions.width, window_dimensions.height)
         .position_centered()
         .opengl()
         .build() {
