@@ -16,16 +16,21 @@ struct WindowDimension {
 }
 
 fn main() {
-    // size of each pixel when rendered. Defaults to 1, increase if you want to zoom in.
-    const BLOCK_SIZE: u32 = 1;
     // we're dealing with rgb triplets, so that's our stride.
     const STRIDE: u32 = 3;
     const FPS: u64 = 60;
     const FRAME_DELAY: Duration = Duration::from_millis(1000 / FPS);
 
+    // size of each pixel when rendered. Defaults to 1, increase if you want to zoom in.
+    let mut block_size: u32 = 1;
+
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
         panic!("Need to supply name of file as command line argument.");
+    }
+
+    if args.len() == 3 {
+        block_size = args[2].parse().unwrap();
     }
 
     let (num_rows, num_cols, pixels) = fileutil::parse_ppm_file(&args[1]);
@@ -33,7 +38,7 @@ fn main() {
     assert!(pixels.len() == (num_cols * num_rows * STRIDE) as usize,
             "Length of pixel array must match num_cols * num_rows * {}. Input is malformed!", STRIDE);
 
-    let window_dimensions = WindowDimension { width: num_cols * BLOCK_SIZE, height: num_rows * BLOCK_SIZE };
+    let window_dimensions = WindowDimension { width: num_cols * block_size, height: num_rows * block_size };
     println!("{} x {}", window_dimensions.width, window_dimensions.height);
 
     let sdl_context = sdl2::init().unwrap();
@@ -61,7 +66,7 @@ fn main() {
             canvas.set_draw_color(sdl2::pixels::Color::RGB(pixels[index] as u8,
                                                            pixels[index + 1] as u8,
                                                            pixels[index + 2] as u8));
-            match canvas.fill_rect(Rect::new(col as i32, row as i32, BLOCK_SIZE, BLOCK_SIZE)) {
+            match canvas.fill_rect(Rect::new((col * block_size) as i32, (row * block_size) as i32, block_size, block_size)) {
                 Ok(_) => {},
                 Err(err) => panic!("Cannot paint rect: {}", err)
             }
