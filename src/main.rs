@@ -21,7 +21,7 @@ fn main() {
     const FPS: u64 = 60;
     const FRAME_DELAY: Duration = Duration::from_millis(1000 / FPS);
 
-    // size of each pixel when rendered. Defaults to 1, increase if you want to zoom in.
+    // size of each pixel when rendered. Defaults to 1, increase if you want to scale up.
     let mut block_size: u32 = 1;
 
     let args: Vec<String> = env::args().collect();
