@@ -16,8 +16,6 @@ struct WindowDimension {
 }
 
 fn main() {
-    // we're dealing with rgb triplets, so that's our stride.
-    const STRIDE: u32 = 3;
     const FPS: u64 = 60;
     const FRAME_DELAY: Duration = Duration::from_millis(1000 / FPS);
 
@@ -33,12 +31,12 @@ fn main() {
         block_size = args[2].parse().unwrap();
     }
 
-    let (num_rows, num_cols, pixels) = fileutil::parse_ppm_file(&args[1]);
+    let ppm = match fileutil::parse_ppm_file(&args[1]) {
+        Ok(ppm) => ppm,
+        Err(err) => panic!(err)
+    };
 
-    assert!(pixels.len() == (num_cols * num_rows * STRIDE) as usize,
-            "Length of pixel array must match num_cols * num_rows * {}. Input is malformed!", STRIDE);
-
-    let window_dimensions = WindowDimension { width: num_cols * block_size, height: num_rows * block_size };
+    let window_dimensions = WindowDimension { width: ppm.num_cols * block_size, height: ppm.num_rows * block_size };
     println!("{} x {}", window_dimensions.width, window_dimensions.height);
 
     let sdl_context = sdl2::init().unwrap();
@@ -60,12 +58,12 @@ fn main() {
     canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
     canvas.clear();
 
-    for row in 0..num_rows {
-        for col in 0..num_cols {
-            let index = (num_cols * row * STRIDE + col * STRIDE) as usize;
-            canvas.set_draw_color(sdl2::pixels::Color::RGB(pixels[index] as u8,
-                                                           pixels[index + 1] as u8,
-                                                           pixels[index + 2] as u8));
+    for row in 0..ppm.num_rows {
+        for col in 0..ppm.num_cols {
+            let index = (ppm.num_cols * row * fileutil::STRIDE + col * fileutil::STRIDE) as usize;
+            canvas.set_draw_color(sdl2::pixels::Color::RGB(ppm.pixels[index] as u8,
+                                                           ppm.pixels[index + 1] as u8,
+                                                           ppm.pixels[index + 2] as u8));
             canvas.fill_rect(Rect::new((col * block_size) as i32, (row * block_size) as i32, block_size, block_size)).expect("Unable to paint rect");
         }
     }
