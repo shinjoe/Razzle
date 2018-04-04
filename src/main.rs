@@ -66,10 +66,7 @@ fn main() {
             canvas.set_draw_color(sdl2::pixels::Color::RGB(pixels[index] as u8,
                                                            pixels[index + 1] as u8,
                                                            pixels[index + 2] as u8));
-            match canvas.fill_rect(Rect::new((col * block_size) as i32, (row * block_size) as i32, block_size, block_size)) {
-                Ok(_) => {},
-                Err(err) => panic!("Cannot paint rect: {}", err)
-            }
+            canvas.fill_rect(Rect::new((col * block_size) as i32, (row * block_size) as i32, block_size, block_size)).expect("Unable to paint rect");
         }
     }
 
