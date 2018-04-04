@@ -15,7 +15,6 @@ struct WindowDimension {
     height: u32
 }
 
-#[allow(unused_must_use)]
 fn main() {
     // size of each pixel when rendered. Defaults to 1, increase if you want to zoom in.
     const BLOCK_SIZE: u32 = 1;
@@ -62,7 +61,10 @@ fn main() {
             canvas.set_draw_color(sdl2::pixels::Color::RGB(pixels[index] as u8,
                                                            pixels[index + 1] as u8,
                                                            pixels[index + 2] as u8));
-            canvas.fill_rect(Rect::new(col as i32, row as i32, BLOCK_SIZE, BLOCK_SIZE));
+            match canvas.fill_rect(Rect::new(col as i32, row as i32, BLOCK_SIZE, BLOCK_SIZE)) {
+                Ok(_) => {},
+                Err(err) => panic!("Cannot paint rect: {}", err)
+            }
         }
     }
 
