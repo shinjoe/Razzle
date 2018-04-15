@@ -30,8 +30,8 @@ pub fn parse_ppm_file(location: &str) -> Result<PPM, String> {
     }
 
     let lines = s.split("\n");
-    let mut rows: u32 = 0;
-    let mut cols: u32 = 0;
+    let mut num_rows: u32 = 0;
+    let mut num_cols: u32 = 0;
     let mut pixels: Vec<u32> = Vec::new();
     for (i, line) in lines.enumerate() {
         match i {
@@ -42,8 +42,8 @@ pub fn parse_ppm_file(location: &str) -> Result<PPM, String> {
             },
             1 => {
                 let dimensions: Vec<u32> = line.split_whitespace().map(|s| s.parse().unwrap()).collect();
-                cols = dimensions[0];
-                rows = dimensions[1];
+                num_cols = dimensions[0];
+                num_rows = dimensions[1];
             },
             2 => {
                 let max_val: u32 = line.trim().parse().unwrap();
@@ -61,9 +61,9 @@ pub fn parse_ppm_file(location: &str) -> Result<PPM, String> {
         }
     }
 
-    if pixels.len() != (cols * rows * STRIDE) as usize {
+    if pixels.len() != (num_cols * num_rows * STRIDE) as usize {
         return Err(format!("Length of pixel array must match num_cols * num_rows * {}. Input is malformed!", STRIDE));
     }
 
-    Ok(PPM { num_rows: rows, num_cols: cols, pixels })
+    Ok(PPM { num_rows, num_cols, pixels })
 }
